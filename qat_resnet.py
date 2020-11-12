@@ -5,9 +5,10 @@ from torchvision import models
 qat_resnet18 = models.resnet18(pretrained=True).eval().cuda()
 
 quantization_type = "per_tensor"
-# 1. per-tensor quantization
+# 1. per-tensor quantization or per-channel quantization
+# tensorrt does not support per-channel quantization
 if (quantization_type == "per_tensor"):
-    qat_resnet18.qconfig = quantization.QConfig(activation=quantization.default_fake_quant, weight=quantization.default_fake_quant)
+    qat_resnet18.qconfig = quantization.QConfig(activation=quantization.default_fake_quant, weight=quantization.default_weight_fake_quant)
 else:
     qat_resnet18.qconfig = quantization.QConfig(activation=quantization.default_fake_quant, weight=quantization.default_per_channel_weight_fake_quant)
 quantization.prepare_qat(qat_resnet18, inplace=True)
